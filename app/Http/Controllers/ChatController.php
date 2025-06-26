@@ -9,7 +9,22 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use OpenAI\Laravel\Facades\OpenAI;
 use Illuminate\Http\StreamedEvent;
+// use Letta\Client;
 
+// $apiUrl = $_ENV['LETTA_API_URL'] ?? null;
+// $apiToken = $_ENV['LETTA_API_TOKEN'] ?? null;
+
+// $agentId = $_ENV['LETTA_TEST_AGENT_ID'] ?? null;
+
+// $client = new Client($apiToken, $apiUrl);
+// $result = $client->health()->check();
+// echo "Health check response:\n" . json_encode($result, JSON_PRETTY_PRINT) . "\n";
+
+
+// echo "Sending message to agent...\n";
+// $response = $client->agents()->sendMessage($agentId, $messages);
+// echo "Response from agent:\n" . json_encode($response, JSON_PRETTY_PRINT) . "\n";
+// $test = 2;
 class ChatController extends Controller
 {
     use AuthorizesRequests;
