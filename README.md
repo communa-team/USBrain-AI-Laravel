@@ -1,5 +1,13 @@
 # Laravel Chat Demo with useStream
 
+SAIL ALIAS
+
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
+
+FOR DEBUG:
+sail build --no-cache
+
+
 A real-time chat application demonstrating the power of Laravel's `useStream` hook for React applications. This demo showcases how to build a ChatGPT-like interface with streaming responses, message persistence, and authentication support.
 
 ## Video Tutorial
