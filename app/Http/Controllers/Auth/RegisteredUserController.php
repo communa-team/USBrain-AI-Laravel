@@ -14,6 +14,7 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 use Letta\Client;
+use App\Http\Requests\Auth\UserRequest;
 
 class RegisteredUserController extends Controller
 {
@@ -30,41 +31,32 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(UserRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $apiUrl = $_ENV['LETTA_API_URL'] ?? null;
+        $user = User::create($request->validated());
+        // $apiUrl = $_ENV['LETTA_API_URL'] ?? null;
         $apiToken = $_ENV['LETTA_API_TOKEN'] ?? null;
 
-        $client = new Client($apiToken, $apiUrl);
+        $client = new Client($apiToken);
         $lettaAgent = $client->agents()->create([
-            'name' => $user->name,
-            'description' => 'Agent for user ' . $user->name,
-            'identity' => [
-                'name' => $user->name,
-                'email' => $user->email,
+            'name' => "OrthodoxTextsAgent_" . $user->nickname,
+            'memory_blocks' => [
+                ['label' => 'human', 'value' => 'Пользователь ' . $user->name . ' желает поолучить ответы на вопросы на основе православных текстов из archival_memory.'],
+                ['label' => 'persona', 'value' => 'Православный ассистент, который отвечает на вопросы пользователя на основе православных текстов из archival_memory.'],
             ],
+            // 'source_ids' => ['source-ed537329-ca09-40c9-a395-905a4f14bf75'], // все тексты ()
+            // Letta обрабатывает файл с None как строку. В контексте файлов это чаще всего происходит в line_chunker.py:44 , где вызывается text.splitlines().
+            'source_ids' => ['source-c3f918ad-3c90-44ab-b392-36b8c0eb9de4'], // один текст
+            'model' => 'letta/letta-free',
+            'embedding' => 'letta/letta-free',
         ]);
-        if (!$lettaAgent || !isset($lettaAgent->id)) {
-            throw new \Exception('Failed to create Letta agent');
-        }
+
         $agent = Agent::create([
+            'name' => "OrthodoxTextsAgent_" . $user->nickname,
             'user_id' => $user->id,
-            'letta_agent_id' => $lettaAgent->id,
-            'name' => $lettaAgent->name,
+            'letta_agent_id' => $lettaAgent['id'],
         ]);
-        echo "Agent:\n" . json_encode($lettaAgent, JSON_PRETTY_PRINT) . "\n";
+        // echo "Agent:\n" . json_encode($lettaAgent, JSON_PRETTY_PRINT) . "\n";
 
         event(new Registered($user));
 
