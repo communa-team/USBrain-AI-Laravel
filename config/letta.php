@@ -12,7 +12,7 @@ return [
     | and organization on your OpenAI dashboard, at https://openai.com.
     */
 
-    'api_key' => env('LETTA_API_KEY'),
+    'api_token' => env('LETTA_API_TOKEN'),
     // 'organization' => env('OPENAI_ORGANIZATION'),
 
     /*

@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'letta' => [
+        'api_token' => env('LETTA_API_TOKEN'),
+        'api_url' => env('LETTA_API_URL'),
+    ],
 
 ];

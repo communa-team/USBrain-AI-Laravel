@@ -46,7 +46,7 @@ class RegisteredUserController extends Controller
             ],
             // 'source_ids' => ['source-ed537329-ca09-40c9-a395-905a4f14bf75'], // все тексты ()
             // Letta обрабатывает файл с None как строку. В контексте файлов это чаще всего происходит в line_chunker.py:44 , где вызывается text.splitlines().
-            'source_ids' => ['source-c3f918ad-3c90-44ab-b392-36b8c0eb9de4'], // один текст
+            // 'source_ids' => ['source-c3f918ad-3c90-44ab-b392-36b8c0eb9de4'], // один текст
             'model' => 'letta/letta-free',
             'embedding' => 'letta/letta-free',
         ]);

@@ -9,14 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use OpenAI\Laravel\Facades\OpenAI;
 use Illuminate\Http\StreamedEvent;
-// use Letta\Client;
+use Letta\Client;
 
 // $apiUrl = $_ENV['LETTA_API_URL'] ?? null;
 // $apiToken = $_ENV['LETTA_API_TOKEN'] ?? null;
 
 // $agentId = $_ENV['LETTA_TEST_AGENT_ID'] ?? null;
 
-// $client = new Client($apiToken, $apiUrl);
 // $result = $client->health()->check();
 // echo "Health check response:\n" . json_encode($result, JSON_PRETTY_PRINT) . "\n";
 
@@ -28,6 +27,11 @@ use Illuminate\Http\StreamedEvent;
 class ChatController extends Controller
 {
     use AuthorizesRequests;
+    protected Client $lettaClient; // Объявляем свойство с типом
+    public function __construct(Client $lettaClient)
+    {
+        $this->lettaClient = $lettaClient;
+    }
 
     public function index()
     {
@@ -82,6 +86,8 @@ class ChatController extends Controller
                 'type' => 'prompt',
                 'content' => $request->firstMessage,
             ]);
+            // $response = $client->agents()->sendMessage($agentId, $messages);
+
 
             return redirect()->route('chat.show', $chat)->with('stream', true);
         }
@@ -152,7 +158,7 @@ class ChatController extends Controller
 
             // Prepare messages for OpenAI
             $openAIMessages = collect($messages)
-                ->map(fn ($message) => [
+                ->map(fn($message) => [
                     'role' => $message['type'] === 'prompt' ? 'user' : 'assistant',
                     'content' => $message['content'],
                 ])
@@ -161,13 +167,34 @@ class ChatController extends Controller
             // Stream response from OpenAI
             $fullResponse = '';
 
-            if (app()->environment('testing') || ! config('openai.api_key')) {
+            // if (app()->environment('testing') || ! config('openai.api_key' && !config('letta.api_key'))) {
+            if (2+2 === 5) {
                 // Mock response for testing or when API key is not set
                 $fullResponse = 'This is a test response.';
                 echo $fullResponse;
+                // ob_flush();
+                // flush();
+            } elseif (config('letta.api_token')) {  
+                // Use Letta API to get response
+                $messages = [
+                    [
+                        'role' => 'user',
+                        'content' => $openAIMessages[count($openAIMessages) - 1]['content'] ?? 'Hello, world!',
+                    ],
+                ];
+                $q = $this->lettaClient->health();
+                $user = Auth::user();
+                $agent = $user->agents()->first();
+                $lettaAgentId = $agent->letta_agent_id ?? null;
+                $response = $this->lettaClient->agents()->sendMessage($lettaAgentId, $messages);
+                // RODO: Reasoning display
+                $reasonResponse = $response['messages'][0]['reasoning'] ?? '';
+                $finalResponse = $response['messages'][1]['content'] ?? '';
+                echo $finalResponse;
                 ob_flush();
                 flush();
             } else {
+                $fullResponse = '';
                 try {
                     $stream = OpenAI::chat()->createStreamed([
                         'model' => 'gpt-4.1-nano',
@@ -221,7 +248,7 @@ class ChatController extends Controller
             ->first();
 
         if ($firstPrompt) {
-            return substr($firstPrompt['content'], 0, 50).'...';
+            return substr($firstPrompt['content'], 0, 50) . '...';
         }
 
         return 'New Chat';
@@ -311,7 +338,6 @@ class ChatController extends Controller
             $chat->update(['title' => $generatedTitle]);
 
             \Log::info('Generated title for chat', ['chat_id' => $chat->id, 'title' => $generatedTitle]);
-
         } catch (\Exception $e) {
             // Fallback title on error
             $fallbackTitle = substr($firstMessage->content, 0, 47) . '...';
