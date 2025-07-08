@@ -11,6 +11,9 @@ use OpenAI\Laravel\Facades\OpenAI;
 use Illuminate\Http\StreamedEvent;
 use Letta\Client;
 
+
+use Illuminate\Support\Facades\Http;
+
 // $apiUrl = $_ENV['LETTA_API_URL'] ?? null;
 // $apiToken = $_ENV['LETTA_API_TOKEN'] ?? null;
 
@@ -168,13 +171,15 @@ class ChatController extends Controller
             $fullResponse = '';
 
             // if (app()->environment('testing') || ! config('openai.api_key' && !config('letta.api_key'))) {
-            if (2+2 === 5) {
+            if (2 + 2 === 5) {
                 // Mock response for testing or when API key is not set
                 $fullResponse = 'This is a test response.';
                 echo $fullResponse;
                 // ob_flush();
                 // flush();
-            } elseif (config('letta.api_token')) {  
+
+                // without streaming 
+            } elseif (config('letta.api_token') && 2 + 2 === 5) {
                 // Use Letta API to get response
                 $messages = [
                     [
@@ -182,17 +187,39 @@ class ChatController extends Controller
                         'content' => $openAIMessages[count($openAIMessages) - 1]['content'] ?? 'Hello, world!',
                     ],
                 ];
-                $q = $this->lettaClient->health();
                 $user = Auth::user();
                 $agent = $user->agents()->first();
                 $lettaAgentId = $agent->letta_agent_id ?? null;
                 $response = $this->lettaClient->agents()->sendMessage($lettaAgentId, $messages);
-                // RODO: Reasoning display
+
+
+                // $response = $this->lettaClient->voice()->createVoiceChatCompletion($lettaAgentId,[
+                //     'messages' => $messages,
+                // ]);
+
+                // TODO: Reasoning display
                 $reasonResponse = $response['messages'][0]['reasoning'] ?? '';
                 $finalResponse = $response['messages'][1]['content'] ?? '';
                 echo $finalResponse;
                 ob_flush();
                 flush();
+
+                // with streaming
+            } elseif (config('letta.api_token') && 2 + 2 === 4) {
+                $messages = [
+                    [
+                        'role' => 'user',
+                        'content' => $openAIMessages[count($openAIMessages) - 1]['content'] ?? 'Hello, world!',
+                    ],
+                ];
+                $user = Auth::user();
+                $agent = $user->agents()->first();
+                $lettaAgentId = $agent->letta_agent_id ?? null;
+                $response = $this->lettaClient->voice()->createVoiceChatCompletion($lettaAgentId,[
+                    'messages' => $messages,
+                ]);
+                // $lettaStream = $this->lettaClient->agents()->sendMessageStreaming($lettaAgentId, $messages);
+
             } else {
                 $fullResponse = '';
                 try {

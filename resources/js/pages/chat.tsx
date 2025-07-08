@@ -9,6 +9,8 @@ import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useStream } from '@laravel/stream-react';
 import { Info } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useEventStream } from '@laravel/stream-react';
+
 
 type Message = {
     id?: number;
@@ -47,7 +49,12 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
     const inputRef = useRef<HTMLInputElement>(null);
 
     const currentChatId = chat?.id || null;
-    const streamUrl = currentChatId ? `/chat/${currentChatId}/stream` : '/chat/stream';
+    // const streamUrl = currentChatId ? `/chat/${currentChatId}/stream` : '/chat/stream';
+    const streamUrl = `/chat/${currentChatId}/stream`
+    // const { message } = useEventStream(streamUrl);
+const eventStream = useEventStream(streamUrl);
+console.log("TESTSTSTST: ", eventStream);
+    //   return <div>{message}</div>;
 
     const { data, send, isStreaming, isFetching, cancel, id } = useStream(streamUrl);
 
@@ -77,7 +84,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
     useEffect(() => {
         if (!isStreaming && inputRef.current) {
             inputRef.current.focus();
-            
+
             // Trigger title generation if this is an authenticated user with "Untitled" chat and we have a response
             if (auth.user && chat && currentTitle === 'Untitled' && data && data.trim()) {
                 setShouldGenerateTitle(true);
@@ -151,7 +158,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                     }}
                 />
             )}
-            
+
             {/* Sidebar title updater - separate EventStream for sidebar */}
             {shouldUpdateSidebar && auth.user && chat && (
                 <SidebarTitleUpdater
@@ -161,7 +168,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                     }}
                 />
             )}
-            
+
             <AppLayout
                 currentChatId={chat?.id}
                 className="flex h-[calc(100vh-theme(spacing.4))] flex-col overflow-hidden md:h-[calc(100vh-theme(spacing.8))]"
@@ -195,7 +202,6 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                 )}
 
                 <Conversation messages={messages} streamingData={data} isStreaming={isStreaming} streamId={id} />
-
                 <div className="bg-background flex-shrink-0 border-t">
                     <div className="mx-auto max-w-3xl p-4">
                         <form onSubmit={handleSubmit}>

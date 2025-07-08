@@ -40,6 +40,7 @@ class RegisteredUserController extends Controller
         $client = new Client($apiToken);
         $lettaAgent = $client->agents()->create([
             'name' => "OrthodoxTextsAgent_" . $user->nickname,
+            'agent_type' => "voice_convo_agent",
             'memory_blocks' => [
                 ['label' => 'human', 'value' => 'Пользователь ' . $user->name . ' желает поолучить ответы на вопросы на основе православных текстов из archival_memory.'],
                 ['label' => 'persona', 'value' => 'Православный ассистент, который отвечает на вопросы пользователя на основе православных текстов из archival_memory.'],
@@ -53,6 +54,8 @@ class RegisteredUserController extends Controller
 
         $agent = Agent::create([
             'name' => "OrthodoxTextsAgent_" . $user->nickname,
+            // "agent_type" => "memgpt_agent",
+            'agent_type' => "voice_convo_agent",
             'user_id' => $user->id,
             'letta_agent_id' => $lettaAgent['id'],
         ]);
