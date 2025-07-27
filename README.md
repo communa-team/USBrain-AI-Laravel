@@ -1,6 +1,6 @@
 # USBrain - USB Second Brain 💾🧠
 
-Development of a project (**USB Second Brain**) of personal AI assistants (like a real friend with a memory of your conversations, but with artificial intelligence LLM.
+Development of a project (**USB Second Brain**) of personal AI assistants (like a real friend with a memory of your conversations, but with artificial intelligence LLM).
 This like **USB Second Brain** -  inserted a USB flash drive 💾 into the your brain 🧠 and got the answers to the questions 💬🧩 you needed!
 
 SAIL ALIAS
