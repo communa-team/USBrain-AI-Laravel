@@ -1,4 +1,6 @@
-# Laravel Chat Demo with useStream
+# USB Second Brain 
+
+Development of a project (USB Second Brain) of personal AI assistants (like a real friend with a memory of your conversations, but with artificial intelligence LLM. This like USB Second Brain -  inserted a USB flash drive into the brain and got the answers to the questions 💬 you needed!
 
 SAIL ALIAS
 
@@ -7,6 +9,7 @@ alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
 FOR DEBUG:
 sail build --no-cache
 
+# Laravel Chat Demo with useStream
 
 A real-time chat application demonstrating the power of Laravel's `useStream` hook for React applications. This demo showcases how to build a ChatGPT-like interface with streaming responses, message persistence, and authentication support.
 
