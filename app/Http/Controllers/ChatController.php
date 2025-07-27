@@ -179,7 +179,7 @@ class ChatController extends Controller
                 // flush();
 
                 // without streaming 
-            } elseif (config('letta.api_token') && 2 + 2 === 5) {
+            } elseif (config('letta.api_token') && 2 + 2 === 4) {
                 // Use Letta API to get response
                 $messages = [
                     [
@@ -190,7 +190,7 @@ class ChatController extends Controller
                 $user = Auth::user();
                 $agent = $user->agents()->first();
                 $lettaAgentId = $agent->letta_agent_id ?? null;
-                $response = $this->lettaClient->agents()->sendMessage($lettaAgentId, $messages);
+                // $response = $this->lettaClient->agents()->sendMessage($lettaAgentId, $messages);
 
 
                 // $response = $this->lettaClient->voice()->createVoiceChatCompletion($lettaAgentId,[
@@ -200,12 +200,14 @@ class ChatController extends Controller
                 // TODO: Reasoning display
                 $reasonResponse = $response['messages'][0]['reasoning'] ?? '';
                 $finalResponse = $response['messages'][1]['content'] ?? '';
+                // $finalResponse = 'adasdsa123';
+                $fullResponse = $finalResponse;
                 echo $finalResponse;
                 ob_flush();
                 flush();
 
                 // with streaming
-            } elseif (config('letta.api_token') && 2 + 2 === 4) {
+            } elseif (config('letta.api_token') && 2 + 2 === 5) {
                 $messages = [
                     [
                         'role' => 'user',

@@ -26,7 +26,27 @@ remove volumes:
 **docker network prune**  # Очистит неиспользуемые сети
 **sail up -d**          # Пересоздаёт контейнеры
 
-Try sail artisan migrate  again.
+Try sail artisan migrate again.
+
+sail npm install && sail npm run build
+npm run dev
+
+
+VSCode Xdebug conf:
+
+{
+    "configurations": [
+        {
+            "name": "Listen for Xdebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "pathMappings": {
+                "/var/www/html": "${workspaceRoot}"
+            }
+        },
+    ]
+}
 
 # Laravel Chat Demo with useStream
 
