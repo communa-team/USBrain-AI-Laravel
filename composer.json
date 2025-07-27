@@ -11,7 +11,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "vendor/letta/letta-php-sdk"
+            "url": "composer-packages/letta/letta-php-sdk"
         }
     ],
     "require": {

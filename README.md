@@ -3,12 +3,30 @@
 Development of a project (**USB Second Brain**) of personal AI assistants (like a real friend with a memory of your conversations, but with artificial intelligence LLM).
 This like **USB Second Brain** -  inserted a USB flash drive 💾 into the your brain 🧠 and got the answers to the questions 💬🧩 you needed!
 
-SAIL ALIAS
-
+Create .env - copy env.example
+**SAIL ALIAS**
+composer install
 alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
+sail up -d
 
-FOR DEBUG:
+**FOR X-DEBUG:**
 sail build --no-cache
+
+sail artisan key:generate
+sail artisan migrate
+
+If you have this error:
+
+  SQLSTATE[08006] [7] connection to server at "pgsql" (172.28.0.2), port 5432 failed: FATAL:  password authentication failed for user "usbrain-laravel" (Connection: pgsql, SQL: select exists (select 1 from pg_class c, pg_namespace n where n.nspname = current_schema() and c.relname = 'migrations' and c.relkind in ('r', 'p') and n.oid = c.relnamespace))
+
+run this command:
+remove volumes:
+
+**sail down --volumes**   # Удаляет контейнеры и тома
+**docker network prune**  # Очистит неиспользуемые сети
+**sail up -d**          # Пересоздаёт контейнеры
+
+Try sail artisan migrate  again.
 
 # Laravel Chat Demo with useStream
 
